@@ -5,10 +5,10 @@
 // #include <stdlib.h>
 
 enum {
-    DEL = 0,
+    OOO = 0,
+    DEL,
     ESC,
     ENT,
-    OOO,
 };
 
 // in_layer_x[key] = 'n' I want to type key 'n' (maybe modified by ctrl or alt)
@@ -38,16 +38,6 @@ char in_layer_msim[30] = {
 
 char is_left(char key) {
 
-    // Slot way:
-    // if (key <= 4) return 1;
-    // if (key <= 9) return 0;
-    // if (key <= 14) return 1;
-    // if (key <= 19) return 0;
-    // if (key <= 24) return 1;
-    // if (key <= 29) return 0;
-    // if (key <= 32) return 1;
-    // if (key <= 35) return 0;
-
     // This comparison is only needed if the last (six key) row is used in layers
     // if (key >= 33) return 0;
 
@@ -55,6 +45,6 @@ char is_left(char key) {
 }
 
 char is_ascii(char key) {
-    return (' ' <= key) && (key >= '~');
+    return (' ' <= key) && (key <= '~');
 }
 #endif
