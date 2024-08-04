@@ -13,8 +13,7 @@
 #define NO_LAYER 0xff
 
 
-struct press_to_combo
-{
+struct press_to_combo {
     char mods[N_KEYS][MAX_LAYERS][MAX_MODS];
     char currdown[N_KEYS];
     char curr_affected[N_KEYS][N_KEYS];
@@ -35,12 +34,13 @@ void init_press_to_combo(struct press_to_combo* ptc) {
     memset(&ptc->mods, NO_KEY, N_KEYS * MAX_LAYERS * MAX_MODS);
     memset(&ptc->currdown, 0, N_KEYS);
     memset(&ptc->curr_affected, 0, N_KEYS * N_KEYS);
+    ptc->waiting_for_release = NO_KEY;
     
     // "canceled" doesn't really need to be initialed but it's good practice.
     memset(&ptc->cancelled, 0, N_KEYS); 
-    ptc->waiting_for_release = NO_KEY;
 }
 
+// Returns the layer 
 char key_up(struct press_to_combo* ptc, char key) {
     // key no longer modifies any other keys
     for (int i = 0; i < N_KEYS; i++) {
@@ -69,12 +69,14 @@ char key_up(struct press_to_combo* ptc, char key) {
             return layer;
         }
     }
+
+    // TODO MAybe here we can stop key-down effects (like arrows...)
     return NO_LAYER;
 }
 
 void key_down(struct press_to_combo* ptc, char key) {
     
-    // Maybe here we can look for key "press" layer for things like ENTER, UP ect
+    // TODO Maybe here we can look for key "press" layer for things like ENTER, UP ect
 
     ptc->currdown[key] = 1;
     ptc->cancelled[key] = 0;
@@ -87,3 +89,38 @@ void addkey(struct press_to_combo* ptc, char up, char key) {
     if (up) key_up(ptc, key);
     else key_down(ptc, key);
 }
+
+enum effect_type {
+
+    // Printable standard ascii chars (affected by layers e.g. Querty)
+    ASCII_TYPE,
+    ASCII_DOWN,
+
+    // Other symbols not pressent in standard ascii also affected by layers
+    EXTENDED_TYPE,
+    EXTENDED_DOWN,
+
+    // Refered to the actuall keycode (for keys like enter, tab...)
+    KEY_TYPE,
+    KEY_DOWN,
+
+    // To release all keys that are being hold down, whithout sending a new key
+    CLEAR,
+
+    // Effects that change the state of the algorithm 
+    // (e.g. change from Querty to Dvorak)
+    INTERNAL    
+};
+
+struct effect
+{
+    enum effect_type effect_type;
+    
+    // The meaning of payload depends on the type (ascii, hid-key, internal)
+    char payload; 
+    
+    // ctrl (1), left alt (4), right alt (64) 
+    // Not used in clear or internal
+    char mods; 
+};
+
