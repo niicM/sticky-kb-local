@@ -3,11 +3,13 @@
 
 enum effect_type {
 
+    NO_EFFECT,
+
     // Printable standard ascii chars (affected by layers e.g. Querty)
     ASCII_TYPE,
     ASCII_DOWN,
 
-    // Other symbols not pressent in standard ascii also affected by layers
+    // Other symbols not pressent in standard ascii (also affected by layers)
     EXTENDED_TYPE,
     EXTENDED_DOWN,
 
@@ -23,14 +25,14 @@ enum effect_type {
     INTERNAL    
 };
 
-struct effect
-{
+struct effect {
+
     enum effect_type effect_type;
     
     // The meaning of payload depends on the type (ascii, hid-key, internal)
     char payload; 
     
-    // ctrl (1), left alt (4), right alt (64) 
+    // ctrl (1), left alt (4), right alt (64) ...
     // Not used in clear or internal
     char mods; 
 };
