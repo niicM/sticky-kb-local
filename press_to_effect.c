@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <string.h>
 #include <stdint.h>
 #include "press_to_effect.h"
 #include "effects.h"

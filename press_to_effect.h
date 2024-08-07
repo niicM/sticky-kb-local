@@ -1,8 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-// #include <stdlib.h>
-// #include "effects.h"
+#include "effects.h"
 
 #define N_LAYERS 4
 #define N_KEY_DOWN_LAYERS 1
@@ -37,3 +36,6 @@ struct press_to_effect {
     // that particular key.
     uint8_t waiting_for_release;
 };
+
+void addkey(struct press_to_effect* pte, struct effect* effect,  
+    uint8_t up, uint8_t key);

@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string.h>
 #include "effects.h"
 #include "press_to_effect.h"
 
@@ -98,7 +99,7 @@ void configure_layout(
 }
 
 
-void init_press_to_combo(struct press_to_effect* pte) {
+void init_press_to_effect(struct press_to_effect* pte) {
     // Don't assume any order in the struct to avoid errors.
 
     memset(&pte->mods, NO_KEY, N_KEYS * N_LAYERS * MAX_MODS);

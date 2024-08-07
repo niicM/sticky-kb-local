@@ -34,7 +34,8 @@ struct effect {
     
     // ctrl (1), left alt (4), right alt (64) ...
     // Not used in clear or internal
-    uint8_t mods; 
+    uint8_t ctrl_alt; 
 };
 
-struct effect no_effect = {NO_EFFECT, 0, 0};
+extern struct effect no_effect;
+extern struct effect clear;
