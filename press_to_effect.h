@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 // #include <stdlib.h>
 // #include "effects.h"
 
@@ -19,20 +20,20 @@
 struct press_to_effect {
 
     // static: Once configurated it stays the samet 
-    char mods[N_KEYS][N_LAYERS][MAX_MODS];
-    struct effect effect_matrix[N_KEYS][N_LAYERS][MAX_MODS];
+    uint8_t mods[N_KEYS][N_LAYERS][MAX_MODS];
+    struct effect effect_matrix[N_KEYS][N_LAYERS];
 
 
     // dynamic: Changes with key presses and releasesc
-    char currdown[N_KEYS];
-    char curr_affected[N_KEYS][N_KEYS];
+    uint8_t currdown[N_KEYS];
+    uint8_t curr_affected[N_KEYS][N_KEYS];
     
     // Once a key has been used to modify another, it can't do an action of it's 
     // own.
-    char cancelled[N_KEYS];
+    uint8_t cancelled[N_KEYS];
 
     // If activated, the key-up of that key will need to finish the key-down
     // effect. Any other effect will finish it, possibly before the release of
     // that particular key.
-    char waiting_for_release;
+    uint8_t waiting_for_release;
 };

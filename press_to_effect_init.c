@@ -33,7 +33,7 @@ char in_layer_msim[30] = {
     '_', '|', '{', '}', '=',   OOO ,OOO, OOO, OOO, OOO
 };
 
-char is_left(char key) {
+uint8_t is_left(uint8_t key) {
 
     // This comparison is only needed if the last (six key) row is used in layers
     return (key < 33) && (key % 10 < 5);
@@ -60,7 +60,7 @@ char is_left(char key) {
 
 
 void configure_layout(    
-    char mods[N_KEYS][N_LAYERS][MAX_MODS],
+    uint8_t mods[N_KEYS][N_LAYERS][MAX_MODS],
     struct effect effect_matrix[N_KEYS][N_LAYERS]
 ) {
     // Layers don't need to appear only once as they can have different ctrl_alt
@@ -69,10 +69,10 @@ void configure_layout(
     };
     
     // Assumptions: for a given layer, for a given side, the ctrl_alt are shared
-    char ctrl_alt [N_LAYERS] = {0};
+    uint8_t ctrl_alt [N_LAYERS] = {0};
 
     // Assumptions: for a given layer, for a given side, the modifiers are shared
-    char layer_modifiers[N_LAYERS][2][MAX_MODS] = {
+    uint8_t layer_modifiers[N_LAYERS][2][MAX_MODS] = {
         //            (0) for right  (1) for left
         {{NO_KEY, NO_KEY, NO_KEY},  {NO_KEY, NO_KEY, NO_KEY}},  // base
         {{10,     NO_KEY, NO_KEY},  {19,     NO_KEY, NO_KEY}},  // caps
@@ -86,11 +86,11 @@ void configure_layout(
             char key_symbol = layers[layer][key_pos];
             if (key_symbol = OOO) continue;
 
-            struct effect ef = {ASCII_TYPE, key_symbol, ctrl_alt[layer]};
+            struct effect ef = {ASCII_TYPE, (uint8_t) key_symbol, ctrl_alt[layer]};
             effect_matrix[key_pos][layer] = ef;
 
             for (int mod = 0; mod < MAX_MODS; mod++) {
-                char m = layer_modifiers[layer][is_left(key_pos)][mod]; 
+                uint8_t m = layer_modifiers[layer][is_left(key_pos)][mod]; 
                 mods[key_pos][layer][mod] = m;
             }
         }

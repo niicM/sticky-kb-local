@@ -1,19 +1,19 @@
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
 #include "press_to_effect.h"
 #include "effects.h"
 
 
 // Returns the layer 
-char key_up(struct press_to_effect* pte, char key) {
+uint8_t key_up(struct press_to_effect* pte, uint8_t key) {
     // key no longer modifies any other keys
     for (int i = 0; i < N_KEYS; i++) {
         pte->curr_affected[i][key] = 0;
     }
     if (pte->cancelled[key]) return NO_LAYER;
 
-    char mods[MAX_MODS] = {NO_KEY};
+    uint8_t mods[MAX_MODS] = {NO_KEY};
     for (int i, j = 0; i < N_KEYS && j < MAX_MODS; i++) {
         if (pte->curr_affected[i]) {
             mods[j] = i;
@@ -40,7 +40,7 @@ char key_up(struct press_to_effect* pte, char key) {
     return NO_LAYER;
 }
 
-void key_down(struct press_to_effect* pte, char key) {
+void key_down(struct press_to_effect* pte, uint8_t key) {
     
     // TODO Maybe here we can look for key "press" layer for things like ENTER, UP ect
 
@@ -51,7 +51,17 @@ void key_down(struct press_to_effect* pte, char key) {
     }
 }
 
-void addkey(struct press_to_effect* pte, char up, char key) {
-    if (up) key_up(pte, key);
-    else key_down(pte, key);
+void addkey(
+    struct press_to_effect* pte, 
+    struct effect* effect,  // out
+    uint8_t up, 
+    uint8_t key
+) {
+    if (up) {
+        uint8_t layer  = key_up(pte, key);
+        *effect = pte->effect_matrix[key][layer];
+    } else {
+        key_down(pte, key);
+        *effect = no_effect;  // For the time being
+    } 
 }

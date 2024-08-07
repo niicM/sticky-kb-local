@@ -1,5 +1,5 @@
 #pragma once
-
+#include <stdint.h>
 
 enum effect_type {
 
@@ -30,10 +30,11 @@ struct effect {
     enum effect_type effect_type;
     
     // The meaning of payload depends on the type (ascii, hid-key, internal)
-    char payload; 
+    uint8_t payload; 
     
     // ctrl (1), left alt (4), right alt (64) ...
     // Not used in clear or internal
-    char mods; 
+    uint8_t mods; 
 };
 
+struct effect no_effect = {NO_EFFECT, 0, 0};
