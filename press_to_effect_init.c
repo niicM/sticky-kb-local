@@ -72,7 +72,8 @@ void configure_layout(
     
     // Assumptions: for a given layer, for a given side, the ctrl_alt are shared
     uint8_t ctrl_alt [N_LAYERS] = {0};
-
+    memset(ctrl_alt, 0, N_LAYERS);
+    
     // Assumptions: for a given layer, for a given side, the modifiers are shared
     uint8_t layer_modifiers[N_LAYERS][2][MAX_MODS] = {
         //            (0) for right  (1) for left

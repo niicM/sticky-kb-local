@@ -33,7 +33,10 @@ uint8_t key_up(struct press_to_effect* pte, uint8_t key) {
         }
         if (m == MAX_MODS) {
             for (m = 0; m < MAX_MODS; m++) {
-                pte->cancelled[m] = 1;
+                int mod_key = mods[m];
+                if (mod_key != NO_KEY) {
+                    pte->cancelled[mod_key] = 1;
+                }
             }
             return layer;
         }
@@ -63,8 +66,12 @@ void addkey(
 ) {
     if (up) {
         uint8_t layer = key_up(pte, key);
-        printf("layer %d\n", layer);
-        *effect = pte->effect_matrix[key][layer];
+        // printf("layer %d\n", layer);
+        if (layer == NO_LAYER) {
+            *effect = no_effect;  // For the time being
+        } else {
+            *effect = pte->effect_matrix[key][layer];
+        }
     } else {
         key_down(pte, key);
         *effect = no_effect;  // For the time being

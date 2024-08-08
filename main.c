@@ -10,11 +10,17 @@ int main(int argc, char const *argv[])
 
     init_press_to_effect(&pte);
     
-    addkey(&pte, &ef, 0, 1);
-    addkey(&pte, &ef, 1, 1);
-    
+    addkey(&pte, &ef, 0, 19);
     print_effect(&ef);
-    printf("hello\n");
+
+    addkey(&pte, &ef, 0, 10);
+    print_effect(&ef);
+
+    addkey(&pte, &ef, 1, 10);
+    print_effect(&ef);
+
+    addkey(&pte, &ef, 1, 19);
+    print_effect(&ef);
 
     return 0;
 }
