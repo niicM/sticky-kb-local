@@ -1,5 +1,7 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "press_to_effect.h"
 #include "effects.h"
 
@@ -12,9 +14,12 @@ uint8_t key_up(struct press_to_effect* pte, uint8_t key) {
     }
     if (pte->cancelled[key]) return NO_LAYER;
 
-    uint8_t mods[MAX_MODS] = {NO_KEY};
-    for (int i, j = 0; i < N_KEYS && j < MAX_MODS; i++) {
-        if (pte->curr_affected[i]) {
+    uint8_t mods[MAX_MODS];
+    memset(mods, NO_KEY, MAX_MODS);
+    int j = 0;
+    for (int i = 0; i < N_KEYS && j < MAX_MODS; i++) {
+        if (pte->curr_affected[key][i]) {
+            printf("m: %d ", i);
             mods[j] = i;
             j++;
         }
@@ -57,7 +62,8 @@ void addkey(
     uint8_t key
 ) {
     if (up) {
-        uint8_t layer  = key_up(pte, key);
+        uint8_t layer = key_up(pte, key);
+        printf("layer %d\n", layer);
         *effect = pte->effect_matrix[key][layer];
     } else {
         key_down(pte, key);

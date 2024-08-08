@@ -39,3 +39,5 @@ struct effect {
 
 extern struct effect no_effect;
 extern struct effect clear;
+
+void print_effect(struct effect* ef);

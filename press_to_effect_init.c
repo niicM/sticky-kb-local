@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include "effects.h"
 #include "press_to_effect.h"
 
@@ -85,7 +86,7 @@ void configure_layout(
         for (int key_pos = 0; key_pos < 30; key_pos++) {
 
             char key_symbol = layers[layer][key_pos];
-            if (key_symbol = OOO) continue;
+            if (key_symbol == OOO) continue;
 
             struct effect ef = {ASCII_TYPE, (uint8_t) key_symbol, ctrl_alt[layer]};
             effect_matrix[key_pos][layer] = ef;
