@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "effects.h"
 #include "press_to_effect.h"
-#include "press_to_effect_init.h"
 
 int main(int argc, char const *argv[])
 {
@@ -10,16 +9,16 @@ int main(int argc, char const *argv[])
 
     init_press_to_effect(&pte);
     
-    addkey(&pte, &ef, 0, 19);
+    key_down(&pte, &ef, 10);
     print_effect(&ef);
 
-    addkey(&pte, &ef, 0, 10);
+    key_down(&pte, &ef, 15);
     print_effect(&ef);
 
-    addkey(&pte, &ef, 1, 10);
+    key_up(&pte, &ef, 15);
     print_effect(&ef);
 
-    addkey(&pte, &ef, 1, 19);
+    key_up(&pte, &ef, 10);
     print_effect(&ef);
 
     return 0;

@@ -2,12 +2,18 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
+
 #include "press_to_effect.h"
+#include "key_mod_effect.h"
 #include "effects.h"
 
 
-// Returns the layer 
-uint8_t key_up(struct press_to_effect* pte, uint8_t key) {
+/**
+ * Returns wether there was a match,
+ * Out: effect. NO_EFFECT can be the result of a match or a result of no match
+ */
+bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
     // key no longer modifies any other keys
     for (int i = 0; i < N_KEYS; i++) {
         pte->curr_affected[i][key] = 0;
@@ -19,61 +25,81 @@ uint8_t key_up(struct press_to_effect* pte, uint8_t key) {
     int j = 0;
     for (int i = 0; i < N_KEYS && j < MAX_MODS; i++) {
         if (pte->curr_affected[key][i]) {
-            printf("m: %d ", i);
+            // printf("m: %d ", i);
             mods[j] = i;
             j++;
         }
     }
-
-    // We only reister if the mods are exactly the same
-    for (int layer = 0; layer < N_LAYERS; layer++) {
-        int m;
-        for (m = 0; m < MAX_MODS; m++) {
-            if (pte->mods[key][layer][m] != mods[m]) break;
-        }
-        if (m == MAX_MODS) {
-            for (m = 0; m < MAX_MODS; m++) {
-                int mod_key = mods[m];
-                if (mod_key != NO_KEY) {
-                    pte->cancelled[mod_key] = 1;
-                }
-            }
-            return layer;
-        }
+    
+    bool matches = k_m_effect(mods, key, effect);
+    if (!matches) {
+        *effect = no_effect;
+        return false;
     }
 
-    // TODO MAybe here we can stop key-down effects (like arrows...)
-    // CLEAR efect
-    return NO_LAYER;
+    for (int m = 0; m < MAX_MODS; m++) {
+        int mod_key = mods[m];
+        if (mod_key != NO_KEY) {
+            pte->cancelled[mod_key] = 1;
+        }
+    }
+    return true;
 }
 
-void key_down(struct press_to_effect* pte, uint8_t key) {
+bool key_down(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
     
     // TODO Maybe here we can look for key "press" layer for things like ENTER, UP ect
 
-    pte->currdown[key] = 1;
-    pte->cancelled[key] = 0;
+    pte->currdown[key] = true;
+    pte->cancelled[key] = false;
+    int total_down = 0;
     for (int i = 0; i < N_KEYS; i++) {
         pte->curr_affected[key][i] = pte->currdown[i];
+        total_down += (int) pte->currdown[i];
     }
+
+    // This is a system to "cancel" all the current keys when you change your
+    // mind.
+    if (total_down > MAX_MODS) {
+        printf("canceling...");
+        for (int i = 0; i < N_KEYS; i++)
+        {
+            pte->cancelled[i] = true;
+        }
+    }
+
+    *effect = no_effect;
+    return false;
 }
 
-void addkey(
-    struct press_to_effect* pte, 
-    struct effect* effect,  // out
-    uint8_t up, 
-    uint8_t key
-) {
-    if (up) {
-        uint8_t layer = key_up(pte, key);
-        // printf("layer %d\n", layer);
-        if (layer == NO_LAYER) {
-            *effect = no_effect;  // For the time being
-        } else {
-            *effect = pte->effect_matrix[key][layer];
-        }
-    } else {
-        key_down(pte, key);
-        *effect = no_effect;  // For the time being
-    } 
+// void addkey(
+//     struct press_to_effect* pte, 
+//     struct effect* effect,  // out
+//     uint8_t up, 
+//     uint8_t key
+// ) {
+//     if (up) {
+//         uint8_t layer = key_up(pte, key);
+//         // printf("layer %d\n", layer);
+//         if (layer == NO_LAYER) {
+//             *effect = no_effect;  // For the time being
+//         } else {
+//             *effect = pte->effect_matrix[key][layer];
+//         }
+//     } else {
+//         key_down(pte, key);
+//         *effect = no_effect;  // For the time being
+//     } 
+// }
+
+
+void init_press_to_effect(struct press_to_effect* pte) {
+    // Don't assume any order in the struct to avoid errors.
+
+    memset(&pte->currdown, 0, N_KEYS);
+    memset(&pte->curr_affected, 0, N_KEYS * N_KEYS);
+    pte->waiting_for_release = NO_KEY;
+    
+    // "canceled" doesn't really need to be initialed but it's good practice.
+    memset(&pte->cancelled, 0, N_KEYS); 
 }

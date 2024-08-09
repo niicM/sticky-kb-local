@@ -12,7 +12,7 @@ void print_effect(struct effect* ef) {
         break;
 
     case ASCII_TYPE:
-        printf("Ascii type %c\n", ef->payload);
+        printf("Ascii type %c (%x)\n", ef->payload, ef->ctrl_alt);
         break;
 
     default:

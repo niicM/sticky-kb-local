@@ -1,5 +1,9 @@
 #pragma once
+
 #include <stdint.h>
+
+#define CTRL 0x01
+#define ALT 0x04
 
 enum effect_type {
 
