@@ -160,7 +160,7 @@ bool k_m_effect_right(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effec
  * Returns false if there is no match.
  * Returns true and copies into the effect if there is a match
  */
-bool k_m_effect(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect) {
+bool up_k_m_effect(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect) {
     if (is_left(key_n)) return k_m_effect_left(mod, key_n, effect);
     else return k_m_effect_right(mod, key_n, effect);
 }

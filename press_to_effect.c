@@ -11,14 +11,19 @@
 
 /**
  * Returns wether there was a match,
- * Out: effect. NO_EFFECT can be the result of a match or a result of no match
+ * Out: effect. NO_EFFECT can be the result of a match, or a result of no match
  */
 bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
+    
+    pte->currdown[key] = false;
     // key no longer modifies any other keys
     for (int i = 0; i < N_KEYS; i++) {
-        pte->curr_affected[i][key] = 0;
+        pte->curr_affected[i][key] = false;
     }
-    if (pte->cancelled[key]) return NO_LAYER;
+    if (pte->cancelled[key]) {
+        *effect = no_effect;
+        return false;
+    }
 
     uint8_t mods[MAX_MODS];
     memset(mods, NO_KEY, MAX_MODS);
@@ -31,7 +36,7 @@ bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
         }
     }
     
-    bool matches = k_m_effect(mods, key, effect);
+    bool matches = up_k_m_effect(mods, key, effect);
     if (!matches) {
         *effect = no_effect;
         return false;
@@ -40,7 +45,7 @@ bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
     for (int m = 0; m < MAX_MODS; m++) {
         int mod_key = mods[m];
         if (mod_key != NO_KEY) {
-            pte->cancelled[mod_key] = 1;
+            pte->cancelled[mod_key] = true;
         }
     }
     return true;
@@ -71,26 +76,6 @@ bool key_down(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
     *effect = no_effect;
     return false;
 }
-
-// void addkey(
-//     struct press_to_effect* pte, 
-//     struct effect* effect,  // out
-//     uint8_t up, 
-//     uint8_t key
-// ) {
-//     if (up) {
-//         uint8_t layer = key_up(pte, key);
-//         // printf("layer %d\n", layer);
-//         if (layer == NO_LAYER) {
-//             *effect = no_effect;  // For the time being
-//         } else {
-//             *effect = pte->effect_matrix[key][layer];
-//         }
-//     } else {
-//         key_down(pte, key);
-//         *effect = no_effect;  // For the time being
-//     } 
-// }
 
 
 void init_press_to_effect(struct press_to_effect* pte) {
