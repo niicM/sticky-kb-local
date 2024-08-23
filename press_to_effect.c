@@ -28,10 +28,10 @@ bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
     uint8_t mods[MAX_MODS];
     memset(mods, NO_KEY, MAX_MODS);
     int j = 0;
-    for (int i = 0; i < N_KEYS && j < MAX_MODS; i++) {
-        if (pte->curr_affected[key][i]) {
-            // printf("m: %d ", i);
-            mods[j] = i;
+    for (int key = 0; key < N_KEYS && j < MAX_MODS; key++) {
+        if (pte->curr_affected[key][key]) {
+            // printf("m: %d ", key);
+            mods[j] = key;
             j++;
         }
     }
@@ -39,6 +39,14 @@ bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
     bool matches = up_k_m_effect(mods, key, effect);
     if (!matches) {
         *effect = no_effect;
+
+        // Design choice: attempting and faillig a combo cancels the modifiers
+        for (int i = 0; i < MAX_MODS; i++) {
+            if (mods[i] != NO_KEY) {
+                pte->cancelled[mods[i]] = true;
+            }
+        } 
+        
         return false;
     }
 
@@ -57,21 +65,21 @@ bool key_down(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
 
     pte->currdown[key] = true;
     pte->cancelled[key] = false;
-    int total_down = 0;
+    // int total_down = 0;
     for (int i = 0; i < N_KEYS; i++) {
         pte->curr_affected[key][i] = pte->currdown[i];
-        total_down += (int) pte->currdown[i];
+        // total_down += (int) pte->currdown[i];
     }
 
     // This is a system to "cancel" all the current keys when you change your
     // mind.
-    if (total_down > MAX_MODS) {
-        printf("canceling...");
-        for (int i = 0; i < N_KEYS; i++)
-        {
-            pte->cancelled[i] = true;
-        }
-    }
+    // if (total_down > MAX_MODS) {
+    //     printf("canceling...");
+    //     for (int i = 0; i < N_KEYS; i++)
+    //     {
+    //         pte->cancelled[i] = true;
+    //     }
+    // }
 
     *effect = no_effect;
     return false;
