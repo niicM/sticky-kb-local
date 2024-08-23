@@ -32,7 +32,7 @@ void t_type_H() {
     print_effect(&ef);
 }
 
-void t_type_o() {
+void t_type_oO() {
 
     struct press_to_effect pte;
     struct effect ef;
@@ -86,7 +86,7 @@ void t_steping_bjk() {
 
 int main(int argc, char const *argv[])
 {
-    // t_type_o();
-    t_steping_bjk();
+    t_type_oO();
+    // t_steping_bjk();
     return 0;
 }
