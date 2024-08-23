@@ -15,10 +15,8 @@ int main(int argc, char const *argv[])
     key_down(&pte, &ef, 12);
     print_effect(&ef);
 
-    key_down(&pte, &ef, 13);
-    print_effect(&ef);
 
-    key_down(&pte, &ef, 16);
+    key_down(&pte, &ef, 13);
     print_effect(&ef);
 
     key_up(&pte, &ef, 16);
