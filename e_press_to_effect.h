@@ -2,7 +2,7 @@
 
 #include <stdint.h> 
 #include <stdbool.h>
-#include "effects.h"
+#include "e_effects.h"
 
 
 #define MAX_MODS 4

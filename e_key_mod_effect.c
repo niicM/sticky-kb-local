@@ -2,8 +2,8 @@
 // #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "effects.h"
-#include "press_to_effect.h"
+#include "e_effects.h"
+#include "e_press_to_effect.h"
 
 
 // To denote empty possitions in the helper layout arrays.

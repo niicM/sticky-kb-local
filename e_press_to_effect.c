@@ -4,9 +4,9 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "press_to_effect.h"
-#include "key_mod_effect.h"
-#include "effects.h"
+#include "e_press_to_effect.h"
+#include "e_key_mod_effect.h"
+#include "e_effects.h"
 
 
 /**

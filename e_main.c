@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "effects.h"
-#include "press_to_effect.h"
+#include "e_effects.h"
+#include "e_press_to_effect.h"
 
 int main(int argc, char const *argv[])
 {
