@@ -57,9 +57,31 @@ uint8_t is_left(uint8_t key) {
 
 
 bool k_m_effect_left(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect) {
+    uint8_t m0 = mod[0]; 
+    uint8_t m1 = mod[1]; 
+    uint8_t m2 = mod[2];
+    uint8_t m3 = mod[3];
 
     struct effect ef = {ASCII_TYPE, NO_KEY, 0};
-    ef.payload = in_layer_base[key_n];
+
+    // Base case
+    if (m0 == NO_KEY) {
+        ef.payload = in_layer_base[key_n];
+    } 
+
+    // Shift
+    else if (m0 == 19) {
+        if (m1 == NO_KEY) {
+            ef.payload = in_layer_base_caps[key_n];
+        } 
+        else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
     *effect = ef;
     return true;
 }
@@ -92,10 +114,10 @@ bool k_m_effect_right(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effec
             ef.payload = in_layer_base_caps[key_n];
         } 
         
-        // Non standard
-        else if (m1 == 3 && m2 == NO_KEY) {
-            ef.effect_type = NO_EFFECT;  // TODO
-        }
+        // // Non standard
+        // else if (m1 == 3 && m2 == NO_KEY) {
+        //     ef.effect_type = NO_EFFECT;  // TODO
+        // }
         else {
             return false;
         }

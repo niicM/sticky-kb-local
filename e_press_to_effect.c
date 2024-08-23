@@ -14,6 +14,7 @@
  * Out: effect. NO_EFFECT can be the result of a match, or a result of no match
  */
 bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
+    printf("(k: %d) ", (int) key);
     
     pte->currdown[key] = false;
     // key no longer modifies any other keys
@@ -28,10 +29,10 @@ bool key_up(struct press_to_effect* pte, struct effect* effect, uint8_t key) {
     uint8_t mods[MAX_MODS];
     memset(mods, NO_KEY, MAX_MODS);
     int j = 0;
-    for (int key = 0; key < N_KEYS && j < MAX_MODS; key++) {
-        if (pte->curr_affected[key][key]) {
-            // printf("m: %d ", key);
-            mods[j] = key;
+    for (int m_key = 0; m_key < N_KEYS && j < MAX_MODS; m_key++) {
+        if (pte->curr_affected[key][m_key]) {
+            printf("(m: %d) ", m_key);
+            mods[j] = m_key;
             j++;
         }
     }
