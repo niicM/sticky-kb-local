@@ -280,13 +280,81 @@ bool up_k_m_effect(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect) 
     }
 }
 
-// This are the patterns that can be completed with more keys afterwards
-bool start_fat_match(uint8_t mod[MAX_MODS], uint8_t key_n) {
-    
-    return mod[0] == 13 && mod[1] == NO_KEY; 
 
-    // if (mod[0] == 13 && mod[1] == NO_KEY) {
-    //     return true;
-    // }
-    // return false;
+
+const uint8_t const left_ms[] = {
+    14,  // + normal
+    23,  // + nums
+    22,  // + more
+};
+
+const uint8_t const right_ms[] = {
+    15,  // + normal
+    26,  // + nums
+    27   // + more
+};
+
+
+// This are the patterns that can be completed with more keys afterwards
+bool start_fat_match(uint8_t mod[MAX_MODS], uint8_t key) {
+
+    if (mod[0] == NO_KEY || mod[1] != NO_KEY) {
+        return false;
+    }
+
+    // The mod and the key are in opposite halves
+    if (is_left(key)) {
+        for (int i = 0; i < 3; i++) {
+            if (mod[0] == right_ms[i]) {
+                return true;
+            }
+        }
+    }
+    else {
+        for (int i = 0; i < 3; i++) {
+            if (mod[0] == left_ms[i]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+bool finish_fat_match(
+    uint8_t mod_key, uint8_t target_key, bool collected[N_KEYS], 
+    struct effect* effect
+) {
+    char* in_layer;
+    char* layers[3] = {
+        in_layer_base, in_layer_nums, in_layer_msim
+    };
+    
+    uint8_t key;
+    for (int i = 0; i < 3; i++) {
+        if (mod_key == left_ms[i] || mod_key == right_ms[i]) {
+            key = layers[i][target_key];
+            break;
+        }
+    }
+    
+    bool mod_alt   = collected[13] || collected[16];
+    bool mod_ctrl  = collected[12] || collected[17];
+    bool mod_win   = collected[11] || collected[18];
+    bool mod_shift = collected[10] || collected[19];
+
+    // Ctrl is implied if there are no modifiers or only shift
+    mod_ctrl = mod_ctrl ^ !(mod_alt || mod_win);
+
+    uint8_t ctrl_alt = 
+        mod_ctrl * CTRL | mod_shift * SHIFT | mod_alt * ALT | mod_win * WIN;
+
+    // Consider using a default like ctrl, in this case
+    if (ctrl_alt == 0) return false;
+
+    effect->effect_type = ASCII_TYPE;
+    effect->payload = key;
+    effect->ctrl_alt = ctrl_alt;
+    return true;
 }

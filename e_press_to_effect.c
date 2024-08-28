@@ -62,7 +62,9 @@ bool key_up(
         }
     }
     else if (pte->waiting_for_release == key) {
-        bool ret = fat_match(          // (ctrl + shit + a)
+
+                                       // Example:
+        bool ret = finish_fat_match(   // (ctrl + shit + a)
             pte->waiting_for_release,  // 13
             pte->target_key,           // 'a'
             pte->collected,            // 16
