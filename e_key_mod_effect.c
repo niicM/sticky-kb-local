@@ -72,12 +72,46 @@ bool k_m_effect_left(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect
     // Shift
     else if (m0 == 19) {
         if (m1 == NO_KEY) {
-            ef.payload = in_layer_base_caps[key_n];
+            uint8_t k = in_layer_base_caps[key_n];
+            ef.payload = k;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    // Numbers (symbols)
+    else if (m0 == 16) {
+        if (m1 == NO_KEY) {
+            uint8_t k = in_layer_nums[key_n];
+            if (k != OOO) {
+                ef.payload = k;
+            }
+            else {
+                return false;
+            }
         } 
         else {
             return false;
         }
     }
+    
+    // More (symbols)
+    else if (m0 == 26) {
+        if (m1 == NO_KEY) {
+            uint8_t k = in_layer_msim[key_n];
+            if (k != OOO) {
+                ef.payload = k;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
     else {
         return false;
     }
@@ -85,6 +119,7 @@ bool k_m_effect_left(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect
     *effect = ef;
     return true;
 }
+
 
 /**
  * This function dessign is very manual and non-general by dessign.
@@ -113,61 +148,72 @@ bool k_m_effect_right(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effec
         if (m1 == NO_KEY) {
             ef.payload = in_layer_base_caps[key_n];
         } 
-        
-        // // Non standard
-        // else if (m1 == 3 && m2 == NO_KEY) {
-        //     ef.effect_type = NO_EFFECT;  // TODO
-        // }
         else {
             return false;
         }
     }
 
-    // Shorcuts
-    else if (11 <= m0 && m0 <= 13) {
-        if (m0 == 13 && m1 == NO_KEY) {
-            ef.ctrl_alt = CTRL;
-            ef.payload = in_layer_base[key_n];
-        }
-        else if (m0 == 12 && m1 == 13 && m2 == NO_KEY) {
-            ef.ctrl_alt = CTRL;
-            ef.payload = in_layer_base_caps[key_n];
-        }
-        else if (m0 == 11 && m1 == 13 && m2 == NO_KEY) {
-            ef.ctrl_alt = CTRL | ALT;
-            ef.payload = in_layer_base[key_n];
-        }
-        else if (m0 == 11 && m1 == 12 && m2 == 13 && m3 == NO_KEY) {
-            ef.ctrl_alt = CTRL | ALT;
-            ef.payload = in_layer_base_caps[key_n];
-        }
-        else {
-            return false; 
-        }
-    } 
-
-    // Numbers
-    else if (21 <= m0 && m0 <= 23) {
-        uint8_t key = in_layer_nums[key_n];
-        if (key != OOO) {
-            ef.payload = key;            
-            if (m0 == 23 && m1 == NO_KEY) {}
-            else if (m0 == 22 && m1 == 23 && m2 == NO_KEY) { 
-                ef.ctrl_alt = CTRL;
-            } 
-            else if (m0 == 21 && m1 == 23 && m2 == NO_KEY) {
-                ef.ctrl_alt = ALT;
-            } 
-            else if (m0 == 21 && m1 == 22 && m2 == 23 && m3 == NO_KEY) {
-                ef.ctrl_alt = CTRL | ALT;
+    // Numbmers
+    else if (m0 == 13) {
+        if (m1 == NO_KEY) {
+            uint8_t k = in_layer_nums[key_n];
+            if (k != OOO) {
+                ef.payload = k;
             }
             else {
                 return false;
             }
-        } else {
+        } 
+        else {
             return false;
         }
     }
+
+    // // Shorcuts
+    // else if (11 <= m0 && m0 <= 13) {
+    //     if (m0 == 13 && m1 == NO_KEY) {
+    //         ef.ctrl_alt = CTRL;
+    //         ef.payload = in_layer_base[key_n];
+    //     }
+    //     else if (m0 == 12 && m1 == 13 && m2 == NO_KEY) {
+    //         ef.ctrl_alt = CTRL;
+    //         ef.payload = in_layer_base_caps[key_n];
+    //     }
+    //     else if (m0 == 11 && m1 == 13 && m2 == NO_KEY) {
+    //         ef.ctrl_alt = CTRL | ALT;
+    //         ef.payload = in_layer_base[key_n];
+    //     }
+    //     else if (m0 == 11 && m1 == 12 && m2 == 13 && m3 == NO_KEY) {
+    //         ef.ctrl_alt = CTRL | ALT;
+    //         ef.payload = in_layer_base_caps[key_n];
+    //     }
+    //     else {
+    //         return false; 
+    //     }
+    // } 
+
+    // // Numbers
+    // else if (21 <= m0 && m0 <= 23) {
+    //     uint8_t key = in_layer_nums[key_n];
+    //     if (key != OOO) {
+    //         ef.payload = key;            
+    //         if (m0 == 23 && m1 == NO_KEY) {}
+    //         else if (m0 == 22 && m1 == 23 && m2 == NO_KEY) { 
+    //             ef.ctrl_alt = CTRL;
+    //         } 
+    //         else if (m0 == 21 && m1 == 23 && m2 == NO_KEY) {
+    //             ef.ctrl_alt = ALT;
+    //         } 
+    //         else if (m0 == 21 && m1 == 22 && m2 == 23 && m3 == NO_KEY) {
+    //             ef.ctrl_alt = CTRL | ALT;
+    //         }
+    //         else {
+    //             return false;
+    //         }
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     else {
         return false;
@@ -177,12 +223,70 @@ bool k_m_effect_right(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effec
     return true;
 }
 
+// https://github.com/y-salnikov/stm32_HID_keyboard/blob/master/usb_hid_keys.h
+#define ENTER 0x28
+#define SPACE 0x2c
+#define BACKSPACE 0x2a
+#define TAB 0x2b
+#define ESC 0x29
+#define CAPSLOCK 0x39
+
+bool k_m_effect_special(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect) {
+    
+    effect->effect_type =  KEY_TYPE;
+    uint8_t key_code;
+
+    switch (key_n) {
+    case 30:
+        key_code = CAPSLOCK;
+        break;
+    case 31:
+        key_code = BACKSPACE;
+        break;
+    case 32:
+        key_code = ENTER;
+        break;
+    case 33:
+        key_code = TAB;
+        break;
+    case 34:
+        key_code = SPACE;
+        break;
+    case 35:
+        key_code = ESC;
+        break;
+    
+    default:
+        break;
+    }
+
+    effect->payload = key_code;
+    return true;
+}
 
 /**
  * Returns false if there is no match.
  * Returns true and copies into the effect if there is a match
  */
 bool up_k_m_effect(uint8_t mod[MAX_MODS], uint8_t key_n, struct effect* effect) {
-    if (is_left(key_n)) return k_m_effect_left(mod, key_n, effect);
-    else return k_m_effect_right(mod, key_n, effect);
+    if (key_n >= 30) {
+        return k_m_effect_special(mod, key_n, effect);
+    } 
+    else if (is_left(key_n)) { 
+        return k_m_effect_left(mod, key_n, effect);
+    } 
+    else {
+        return k_m_effect_right(mod, key_n, effect);
+    }
+}
+
+// This are the patterns that can be completed with more keys afterwards
+bool start_fat_match(uint8_t mod[MAX_MODS], uint8_t key_n) {
+    
+    return mod[0] == 13 && mod[1] == NO_KEY; 
+
+    // if (mod[0] == 13 && mod[1] == NO_KEY) {
+    //     return true;
+    // }
+    // return false;
 }
